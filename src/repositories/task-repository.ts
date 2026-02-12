@@ -1,29 +1,38 @@
-import {prisma} from '../lib/prisma'
+import { prisma } from "../lib/prisma";
+import { Prisma, Task } from "@prisma/client";
 
 export class TaskRepository {
-    async createTask(title: string, description: string | undefined, userId: string) {
-        return await prisma.task.create({
-            data: { title, description, userId },
+    async create(data: Prisma.TaskUncheckedCreateInput): Promise<Task> {
+        return await prisma.task.create({ data });
+    }
+
+    async findById(id: string): Promise<Task | null> {
+        return await prisma.task.findUnique({
+            where: { id }
         });
     }
 
-    async getTasksByUserId(userId: string) {
+    async findManyByUserId(userId: string): Promise<Task[]> {
         return await prisma.task.findMany({
-            where: { userId },
+            where: { 
+                userId, 
+                isDeleted: false 
+            },
+            orderBy: { createdAt: 'desc' } 
         });
     }
 
-    async updateTask(id: string, title?: string, description?: string, completed?: boolean, userId?: string) {
+    async update(id: string, data: Prisma.TaskUpdateInput): Promise<Task> {
         return await prisma.task.update({
             where: { id },
-            data: { title, description, completed, userId },
+            data
         });
     }
 
-    async deleteTask(id: string) {
-        await prisma.task.update({
-            where: { id },
-            data: { isDeleted: true },
+    async findAllActive(): Promise<Task[]> {
+        return await prisma.task.findMany({
+            where: { isDeleted: false },
+            include: { user: { select: { name: true } } }
         });
     }
 }

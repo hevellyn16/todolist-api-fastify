@@ -1,17 +1,35 @@
 import { TaskRepository } from "../repositories/task-repository";
 
+const taskRepository = new TaskRepository();
+
 export class TaskService {
-    constructor(private taskRepository: TaskRepository) {}
-    
-    async createTask(title: string, description: string | undefined, userId: string) {
-        return await this.taskRepository.createTask(title, description, userId);
+    async create(title: string, description: string | undefined, userId: string) {
+        if (!title.trim()) throw new Error("TitleRequired");
+
+        return await taskRepository.create({ title, description, userId });
     }
 
-    async getTasksByUserId(userId: string) {
-        return await this.taskRepository.getTasksByUserId(userId);
+    async update(id: string, userId: string, data: any) {
+        const task = await taskRepository.findById(id);
+
+        if (!task || task.userId !== userId) {
+            throw new Error("TaskNotFound");
+        }
+
+        return await taskRepository.update(id, data);
     }
 
-    async updateTask(id: string, title?: string, description?: string, completed?: boolean, userId?: string) {
-        return await this.taskRepository.updateTask(id, title, description, completed, userId);
+    async delete(id: string, userId: string) {
+        const task = await taskRepository.findById(id);
+
+        if (!task || task.userId !== userId) {
+            throw new Error("TaskNotFound");
+        }
+
+        return await taskRepository.update(id, { isDeleted: true });
+    }
+
+    async getByUserId(userId: string) {
+        return await taskRepository.findManyByUserId(userId);
     }
 }

@@ -1,33 +1,23 @@
-import { FastifyRequest,FastifyReply } from "fastify";
+import { FastifyRequest, FastifyReply } from "fastify";
 import { loginUserSchema } from "../schemas/user-schema";
-import { prisma } from "../lib/prisma";
-import bcrypt from 'bcrypt';
+import { AuthService } from "../services/auth-service";
+
+const authService = new AuthService();
 
 export class AuthController {
     async login(request: FastifyRequest, reply: FastifyReply) {
-        const validation = loginUserSchema.safeParse(request.body);
-        if (!validation.success) {
-            return reply.status(400).send({ message: "Validation failed", errors: validation.error.format() });
-        }
-
-        const { email, password } = validation.data;
-        const user = await prisma.user.findUnique({
-            where: { email },
-        });
+        const { email, password } = loginUserSchema.parse(request.body);
+        const user = await authService.validateUser(email, password);
 
         if (!user) {
-            reply.status(401)
-            return { error: "Invalid credentials" }
+            return reply.status(401).send({ error: "Invalid email or password" });
         }
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            reply.status(401)
-            return { error: "Invalid credentials" }
-        }
+        const token = await reply.jwtSign({ role: user.role }, {
+            sub: user.id,
+            expiresIn: '7d',
+        });
 
-
-        const token = await reply.jwtSign({ sub: user.id}, { expiresIn: '1h' })
-        return { token }
+        return reply.status(200).send({ token });
     }
 }

@@ -11,8 +11,8 @@ POST {{baseUrl}}/login
 Content-Type: application/json
 
 {
-  "email": "aelin@exemplo.com",
-  "password": "senha_segura_123"
+  "email": "admin@exemplo.com",
+  "password": "senha-admin_123"
 }
 
 ### Armazenar o Token do Login acima
@@ -27,17 +27,17 @@ POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "name": "Momo",
-  "email": "momo@exemplo.com",
+  "name": "Teste",
+  "email": "teste@exemplo.com",
   "password": "senha_segura_123"
 }
 
-### Listar Todos os Usuários (ADMIN ou MANAGER)
-GET {{baseUrl}}/allusers
+### Listar Todos os Usuários (ADMIN)
+GET {{baseUrl}}/admin/allusers
 Authorization: Bearer {{authToken}}
 
 ### Atualizar Próprio Perfil (Logado)
-PUT {{baseUrl}}/users/a254e919-3318-416b-b15c-f8927d6d27b0
+PUT {{baseUrl}}/me
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -45,22 +45,25 @@ Authorization: Bearer {{authToken}}
   "name": "Hevellyn Meiriane (Editado)"
 }
 
+### Listar Próprio Perfil com Tarefas
+GET {{baseUrl}}/me
+Authorization: Bearer {{authToken}}
+
 # ==========================================
 # 3. ÁREA ADMINISTRATIVA (Apenas ADMIN)
 # ==========================================
 
-### Promover Usuário (Apenas ADMIN)
-# Essa é a rota do seu novo AdminController
-PUT {{baseUrl}}/admin/users/e2708171-5812-48cd-9822-1d72deb17320/role
+### Editar qualquer usuário (Apenas ADMIN)
+PUT {{baseUrl}}/admin/users/a4bc44af-266d-4b96-8fd9-efad82e86a43
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "role": "ADMIN"
+  "role": "USER"
 }
 
 ### Deletar Usuário (Soft Delete - Apenas ADMIN)
-DELETE {{baseUrl}}/users/100d064a-0c39-4bd6-8d71-18d84b326a51
+DELETE {{baseUrl}}/admin/users/a4bc44af-266d-4b96-8fd9-efad82e86a43
 Authorization: Bearer {{authToken}}
 
 # ==========================================
@@ -81,15 +84,19 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "title": "Estudar Eletromagnetismo",
-  "description": "Revisar equações de Maxwell"
+  "title": "Estudar Programação",
+  "description": "Revisar conceitos de JavaScript e TypeScript"
 }
 
 ### Atualizar Tarefa Existente
-PUT {{baseUrl}}/tasks/8a52dc68-3e7f-4464-82b3-a5eb96ad4ed8
+PUT {{baseUrl}}/tasks/68e8941d-c8a3-49b7-ac58-ded9e6dd58ae
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "userId": "4ea3ed94-618c-47ba-a593-8e892a5b6c56"
+  "description": "Revisar conceitos de JavaScript e TypeScript e fazer exercícios"
 }
+
+### Deletar Tarefa
+DELETE {{baseUrl}}/tasks/68e8941d-c8a3-49b7-ac58-ded9e6dd58ae
+Authorization: Bearer {{authToken}}

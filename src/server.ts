@@ -1,19 +1,4 @@
-import 'dotenv/config'
-import fastify from 'fastify'
-import { adminRoutes, authRoutes, userRoutes } from './routes/user-routes'
-import { taskRoutes } from './routes/task-routes'
-import jwt from '@fastify/jwt';
-
-const app = fastify()
-
-app.register(jwt, {
-    secret: process.env.JWT_SECRET || 'your-secret-key'
-})
-
-app.register(authRoutes)
-app.register(userRoutes)
-app.register(taskRoutes)
-app.register(adminRoutes)
+import { app } from './app'
 
 app.get('/', async () => {
   return { message: 'API Online com Prisma Postgres!' }

@@ -6,13 +6,17 @@ export function authorize(roles: ("USER" | "ADMIN")[]) {
             await request.jwtVerify();
 
             const userRole = request.user.role;
+
+            //Role Debug
+            /*console.log("DEBUG - Role que veio no Token:", userRole);
+            console.log("DEBUG - Roles permitidos para acessar o recurso:", roles); */
+
             if (!roles.includes(userRole)) {
-                reply.status(403);
-                return { error: "Access denied. Insufficient permissions." };
+                reply.status(403).send({ error: "You do not have permission to access this resource" });
+                return;
             }
         } catch (error) {
-            reply.status(401);
-            return { error: "Unauthorized" };
+            reply.status(401).send({ error: "Unauthorized" });
         }
 
     }

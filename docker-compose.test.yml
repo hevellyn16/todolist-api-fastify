@@ -1,0 +1,9 @@
+services:
+  test-db:
+    image: bitnami/postgresql:latest
+    ports:
+      - '5433:5432'
+    environment:
+      - POSTGRESQL_USERNAME=user_test
+      - POSTGRESQL_PASSWORD=pass_test
+      - POSTGRESQL_DATABASE=todo_test

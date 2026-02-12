@@ -1,32 +1,23 @@
-import {prisma} from '../lib/prisma';
-
+import { prisma } from "../lib/prisma";
+import { Prisma, User } from "@prisma/client";
 
 export class UserRepository {
-    async createUser(name: string, email: string, password: string) {
-        return await prisma.user.create({
-            data: { name, email, password },
-        });
+    async create(data: Prisma.UserCreateInput): Promise<User> {
+        return await prisma.user.create({ data });
     }
 
-    async getAllUsers() {
-        return await prisma.user.findMany();
+    async findByEmail(email: string): Promise<User | null> {
+        return await prisma.user.findUnique({ where: { email } });
     }
 
-    async deleteUser(id: string) {
-        await prisma.user.update({
+    async findById(id: string): Promise<User | null> {
+        return await prisma.user.findUnique({
             where: { id },
-            data: { isDeleted: true },
+            include: { tasks: { where: { isDeleted: false } } }
         });
     }
 
-    async updateUser(id: string, name?: string, email?: string, password?: string) {
-        const data: any = {};
-        if (name) data.name = name;
-        if (email) data.email = email;
-        if (password) data.password = password;
-        return await prisma.user.update({
-            where: { id },
-            data,
-        });
+    async update(id: string, data: Prisma.UserUpdateInput): Promise<User> {
+        return await prisma.user.update({ where: { id }, data });
     }
 }

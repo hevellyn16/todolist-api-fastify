@@ -1,25 +1,104 @@
 import { FastifyInstance } from "fastify";
 import { TaskController } from "../controllers/task-controller";
-import { AdminController } from "../controllers/admin-controller";
-import { authorize } from "../middlewares/rbac";
+import { loginUserSchema } from "../schemas/user-schema";
+import { z } from "zod";
+import { createTaskSchema, updateTaskSchema } from "../schemas/task-schema";
 
 const taskController = new TaskController();
-const adminController = new AdminController();
 
 export async function taskRoutes(app: FastifyInstance) {
     //Create Task
-    app.post('/tasks', { preHandler: authorize(["USER", "ADMIN"]) }, taskController.createTask.bind(taskController));
+    app.post('/tasks', { 
+        schema: {
+            tags: ['Tasks'],
+            summary: "Create a new task",
+            description: "Create a new task for the authenticated user",
+            body: createTaskSchema,
+            response: {
+                201: z.object({
+                    id: z.string(),
+                    title: z.string(),
+                    description: z.string().optional(),
+                    completed: z.boolean(),
+                    userId: z.string(),
+                    createdAt: z.date().optional(),
+                }),
+                401: z.object({
+                    error: z.string(),
+                }),
+            },
+        },
+        preHandler: [async (request) => await request.jwtVerify()] },
+    taskController.createTask.bind(taskController));
 
     //Get all Tasks by User ID
-    app.get('/tasks', { preHandler: authorize(["USER", "ADMIN"]) }, taskController.getTasksByUserId.bind(taskController));
+    app.get('/tasks', { 
+        schema: {
+            tags: ['Tasks'],
+            summary: "Get all tasks for the authenticated user",
+            description: "Retrieve all tasks associated with the authenticated user",
+            response: {
+                200: z.array(z.object({
+                    id: z.string(),
+                    title: z.string(),
+                    description: z.string().optional(),
+                })),
+                401: z.object({
+                    error: z.string(),
+                }),
+            },
+        },
+        preHandler: [async (request) => await request.jwtVerify()] }, 
+    taskController.getMyTasks.bind(taskController));
 
-    //Get all Tasks (Admin)
-    app.get('/admin/tasks', { preHandler: authorize(["ADMIN"]) }, adminController.getAllTasks.bind(adminController));
 
     //Update Task
-    app.put('/tasks/:id', { preHandler: authorize(["USER", "ADMIN"]) }, taskController.updateTask.bind(taskController));
+    app.put('/tasks/:id', {
+        schema: {
+            tags: ['Tasks'],
+            summary: "Update a task",
+            description: "Update a task by its ID for the authenticated user",
+            params: z.object({
+                id: z.string(),
+            }),
+            body: updateTaskSchema,
+            response: {
+                200: z.object({
+                    id: z.string(),
+                    title: z.string(),
+                    description: z.string(),
+                }),
+                401: z.object({
+                    error: z.string(),                
+                }),
+                404: z.object({
+                    message: z.string(),
+                }),
+            },
+        },
+        preHandler: [async (request) => await request.jwtVerify()] }, taskController.updateTask.bind(taskController));
 
     //Delete Task
-    app.delete('/tasks/:id', { preHandler: authorize(["USER", "ADMIN"]) }, taskController.deleteTask.bind(taskController));
+    app.delete('/tasks/:id', {
+        schema: {
+            tags: ['Tasks'],
+            summary: "Delete a task",
+            description: "Delete a task by its ID for the authenticated user",
+            params: z.object({
+                id: z.string(),
+            }),
+            response: {
+                200: z.object({
+                    message: z.string(),
+                }),
+                401: z.object({
+                    error: z.string(),
+                }),
+                404: z.object({
+                    message: z.string(),
+                }),
+            },
+        },
+        preHandler: [async (request) => await request.jwtVerify()] }, taskController.deleteTask.bind(taskController));
         
 }
