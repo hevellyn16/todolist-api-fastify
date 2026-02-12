@@ -1,27 +1,50 @@
-@baseUrl = http://localhost:3333
+### Configurações Globais
+@baseUrl = http://127.0.0.1:3333
+# Cole o token gerado no login aqui para os testes protegidos
+@authToken = {{login.response.body.token}}
 
-### Get all users
-GET {{baseUrl}}/users
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json
 
-### Create a new user
+{
+  "email": "rowan@exemplo.com",
+  "password": "senha_segura_123"
+}
+
+### 1. Listar Todos os Usuários (Protegida)
+GET {{baseUrl}}/allusers
+Authorization: Bearer {{authToken}}
+###
+
+### 2. Criar Novo Usuário (Pública)
 POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "name": "John Doe",
-  "email": "john.doe@example.com",
-  "password": "securepassword123"
+  "name": "Rowan Whitethorn",
+  "email": "rowan@exemplo.com",
+  "password": "senha_segura_123"
 }
+###
 
-### Get all tasks
+### 3. Listar Tarefas (Pública ou Protegida conforme seu código)
 GET {{baseUrl}}/tasks
+Authorization: Bearer {{authToken}}
+###
 
-### Create a new task
+### 4. Criar Nova Tarefa (Protegida)
 POST {{baseUrl}}/tasks
 Content-Type: application/json
+Authorization: Bearer {{authToken}}
 
 {
-  "title": "Buy groceries",
-  "description": "Milk, Bread, Eggs, and Butter",
-  "userId": "100d064a-0c39-4bd6-8d71-18d84b326a51"
+  "title": "Comprar leite",
+  "description": "Ir ao supermercado e comprar leite"
 }
+###
+
+### 5. Deletar Usuário (Protegida)
+DELETE {{baseUrl}}/users/100d064a-0c39-4bd6-8d71-18d84b326a51
+Authorization: Bearer {{authToken}}
+###

@@ -12,6 +12,11 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -19,6 +24,8 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  isDeleted Boolean  @default(false)
+  role      Role     @default(USER)
 
   @@map("users")
   tasks Task[]
@@ -27,10 +34,12 @@ model User {
 model Task {
   id        String   @id @default(uuid())
   title     String
+  description String?
   completed Boolean  @default(false)
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  isDeleted Boolean  @default(false)
 
   user User @relation(fields: [userId], references: [id])
 
