@@ -18,4 +18,16 @@ export class AdminController {
             return { error: "Unauthorized" }
         }
     }
+
+    async getAllTasks(request: FastifyRequest, reply: FastifyReply) {
+        try {
+            await request.jwtVerify();
+            const tasks = await prisma.task.findMany({
+                where: { isDeleted: false },
+            })
+            return reply.status(200).send(tasks)
+        } catch (error) {
+            reply.status(401).send({ error: "Unauthorized" });
+        }
+    }
 }

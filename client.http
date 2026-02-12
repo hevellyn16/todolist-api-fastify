@@ -27,9 +27,9 @@ POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "name": "Novo Usuário Teste",
-  "email": "teste@exemplo.com",
-  "password": "senha_abc_123"
+  "name": "Momo",
+  "email": "momo@exemplo.com",
+  "password": "senha_segura_123"
 }
 
 ### Listar Todos os Usuários (ADMIN ou MANAGER)
@@ -37,7 +37,7 @@ GET {{baseUrl}}/allusers
 Authorization: Bearer {{authToken}}
 
 ### Atualizar Próprio Perfil (Logado)
-PUT {{baseUrl}}/users/id-do-usuario-aqui
+PUT {{baseUrl}}/users/a254e919-3318-416b-b15c-f8927d6d27b0
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -71,6 +71,9 @@ Authorization: Bearer {{authToken}}
 GET {{baseUrl}}/tasks
 Authorization: Bearer {{authToken}}
 
+### Listar Todas as Tarefas (ADMIN)
+GET {{baseUrl}}/admin/tasks
+Authorization: Bearer {{authToken}}
 
 ### Criar Nova Tarefa
 POST {{baseUrl}}/tasks
@@ -78,6 +81,15 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "title": "Estudar Eletromagnetismo para a UFC",
+  "title": "Estudar Eletromagnetismo",
   "description": "Revisar equações de Maxwell"
+}
+
+### Atualizar Tarefa Existente
+PUT {{baseUrl}}/tasks/8a52dc68-3e7f-4464-82b3-a5eb96ad4ed8
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "userId": "4ea3ed94-618c-47ba-a593-8e892a5b6c56"
 }

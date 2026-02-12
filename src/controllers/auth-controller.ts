@@ -1,13 +1,19 @@
 import { FastifyRequest,FastifyReply } from "fastify";
+import { loginUserSchema } from "../schemas/user-schema";
 import { prisma } from "../lib/prisma";
 import bcrypt from 'bcrypt';
 
 export class AuthController {
     async login(request: FastifyRequest, reply: FastifyReply) {
-        const { email, password } = request.body as { email: string; password: string }
+        const validation = loginUserSchema.safeParse(request.body);
+        if (!validation.success) {
+            return reply.status(400).send({ message: "Validation failed", errors: validation.error.format() });
+        }
+
+        const { email, password } = validation.data;
         const user = await prisma.user.findUnique({
             where: { email },
-        })
+        });
 
         if (!user) {
             reply.status(401)
