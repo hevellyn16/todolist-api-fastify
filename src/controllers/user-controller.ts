@@ -18,9 +18,16 @@ export class UserController {
     }
 
     async getProfile(request: FastifyRequest, reply: FastifyReply) {
-        const user = await userService.getProfile(request.user.sub);
-        const { password: _, ...userWithoutPassword } = user;
-        return reply.status(200).send(userWithoutPassword);
+        try {
+            const user = await userService.getProfile(request.user.sub);
+            const { password: _, ...userWithoutPassword } = user;
+            return reply.status(200).send(userWithoutPassword);
+        } catch (error: any) {
+            if (error.message === "UserNotFound") {
+                return reply.status(404).send({ message: "User not found" });
+            }
+            throw error;
+        }
     }
 
     async updateProfile(request: FastifyRequest, reply: FastifyReply) {

@@ -11,8 +11,8 @@ POST {{baseUrl}}/login
 Content-Type: application/json
 
 {
-  "email": "admin@exemplo.com",
-  "password": "senha-admin_123"
+  "email": "teste@exemplo.com",
+  "password": "senha_segura_123"
 }
 
 ### Armazenar o Token do Login acima
@@ -46,7 +46,7 @@ Authorization: Bearer {{authToken}}
 }
 
 ### Listar Próprio Perfil com Tarefas
-GET {{baseUrl}}/me
+GET {{baseUrl}}/profile
 Authorization: Bearer {{authToken}}
 
 # ==========================================

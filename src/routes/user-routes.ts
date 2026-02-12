@@ -77,7 +77,7 @@ export async function userRoutes(app: FastifyInstance) {
         preHandler: [async (request) => await request.jwtVerify()] }, userController.updateProfile.bind(userController));
 
     //Get Profile with Tasks
-    app.get('/me', {
+    app.get('/profile', {
         schema: {
             tags: ['Users'],
             summary: "Get user profile with tasks",
@@ -91,7 +91,8 @@ export async function userRoutes(app: FastifyInstance) {
                     tasks: z.array(z.object({
                         id: z.string(),
                         title: z.string(),
-                        description: z.string(),                    })),
+                        description: z.string().nullable(),                    
+                    })),
                 }),
                 401: z.object({
                     error: z.string(),

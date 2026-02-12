@@ -5,6 +5,15 @@ import { z } from "zod";
 import { createTaskSchema, updateTaskSchema } from "../schemas/task-schema";
 
 const taskController = new TaskController();
+const ResponseSchema = z.object({
+    id: z.string(),
+    title: z.string(),
+    description: z.string().optional().nullable(),
+    completed: z.boolean(),
+    userId: z.string(),
+    createdAt: z.coerce.date().optional(),
+    updatedAt: z.coerce.date().optional(),
+});
 
 export async function taskRoutes(app: FastifyInstance) {
     //Create Task
@@ -15,16 +24,13 @@ export async function taskRoutes(app: FastifyInstance) {
             description: "Create a new task for the authenticated user",
             body: createTaskSchema,
             response: {
-                201: z.object({
-                    id: z.string(),
-                    title: z.string(),
-                    description: z.string().optional(),
-                    completed: z.boolean(),
-                    userId: z.string(),
-                    createdAt: z.date().optional(),
+                201: ResponseSchema,
+                400: z.object({
+                    message: z.string(),
+                    errors: z.record(z.string(), z.array(z.string())),
                 }),
-                401: z.object({
-                    error: z.string(),
+                500: z.object({
+                    message: z.string(),
                 }),
             },
         },
@@ -38,13 +44,9 @@ export async function taskRoutes(app: FastifyInstance) {
             summary: "Get all tasks for the authenticated user",
             description: "Retrieve all tasks associated with the authenticated user",
             response: {
-                200: z.array(z.object({
-                    id: z.string(),
-                    title: z.string(),
-                    description: z.string().optional(),
-                })),
-                401: z.object({
-                    error: z.string(),
+                200: z.array(ResponseSchema),
+                500: z.object({
+                    message: z.string(),
                 }),
             },
         },
@@ -88,9 +90,7 @@ export async function taskRoutes(app: FastifyInstance) {
                 id: z.string(),
             }),
             response: {
-                200: z.object({
-                    message: z.string(),
-                }),
+                204: z.null(),
                 401: z.object({
                     error: z.string(),
                 }),

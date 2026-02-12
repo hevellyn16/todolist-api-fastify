@@ -17,6 +17,7 @@
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^25.2.3",
     "@types/supertest": "^6.0.3",
+    "@vitest/coverage-v8": "^4.0.18",
     "dotenv-cli": "^11.0.0",
     "prisma": "^7.3.0",
     "supertest": "^7.2.2",
@@ -30,7 +31,8 @@
     "test:down": "docker-compose -f docker-compose.test.yml down",
     "pretest": "npm run test:up && dotenv -e .env.test -- npx prisma migrate deploy",
     "test": "dotenv -e .env.test -- vitest run",
-    "posttest": "npm run test:down"
+    "posttest": "npm run test:down",
+    "test:coverage": "vitest run --coverage"
   },
   "prisma": {
     "seed": "npx tsx src/prisma/seed.ts"
