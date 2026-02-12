@@ -1,55 +1,21 @@
 import { FastifyInstance } from "fastify";
 import { TaskController } from "../controllers/task-controller";
-import jwt from '@fastify/jwt';
 import { prisma } from "../lib/prisma";
+import { authorize } from "../middlewares/rbac";
 
 const taskController = new TaskController();
 
 export async function taskRoutes(app: FastifyInstance) {
-    app.post('/tasks', async (request, reply) => {
-        try{
-            await request.jwtVerify();
-            const task = prisma.task.create({
-                data: {
-                    title: (request.body as { title: string }).title,
-                    description: (request.body as { description?: string }).description,
-                    userId: request.user.sub,
-                },
-            });
-            return task;    
-        } catch (error) {
-            reply.status(401)
-            return { error: "Unauthorized" }
-        }
-    });
+    //Create Task
+    app.post('/tasks', { preHandler: authorize(["USER", "ADMIN"]) }, taskController.createTask.bind(taskController));
 
-    app.get('/tasks', async (request, reply) => {
-        try{
-            await request.jwtVerify();
-            return await taskController.getTasksByUserId(request, reply);
-        } catch (error) {
-            reply.status(401)
-            return { error: "Unauthorized" }
-        }
-    });
+    //Get all Tasks by User ID
+    app.get('/tasks', { preHandler: authorize(["USER", "ADMIN"]) }, taskController.getTasksByUserId.bind(taskController));
 
-    app.put('/tasks/:id', async (request, reply) => {
-        try{
-            await request.jwtVerify();
-            return await taskController.updateTask(request, reply);
-        } catch (error) {
-            reply.status(401)
-            return { error: "Unauthorized" }
-        }
-    });
+    //Update Task
+    app.put('/tasks/:id', { preHandler: authorize(["USER", "ADMIN"]) }, taskController.updateTask.bind(taskController));
 
-    app.delete('/tasks/:id', async (request, reply) => {
-        try{
-            await request.jwtVerify();
-            return await taskController.deleteTask(request, reply);
-        } catch (error) {
-            reply.status(401)
-            return { error: "Unauthorized" }
-        }
-    });
+    //Delete Task
+    app.delete('/tasks/:id', { preHandler: authorize(["USER", "ADMIN"]) }, taskController.deleteTask.bind(taskController));
+        
 }

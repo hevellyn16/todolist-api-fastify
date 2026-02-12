@@ -1,50 +1,83 @@
 ### Configurações Globais
 @baseUrl = http://127.0.0.1:3333
-# Cole o token gerado no login aqui para os testes protegidos
-@authToken = {{login.response.body.token}}
 
+# ==========================================
+# 1. AUTENTICAÇÃO E LOGIN
+# ==========================================
+
+### Realizar Login (Gera o Token)
 # @name login
 POST {{baseUrl}}/login
 Content-Type: application/json
 
 {
-  "email": "rowan@exemplo.com",
+  "email": "aelin@exemplo.com",
   "password": "senha_segura_123"
 }
 
-### 1. Listar Todos os Usuários (Protegida)
-GET {{baseUrl}}/allusers
-Authorization: Bearer {{authToken}}
-###
+### Armazenar o Token do Login acima
+@authToken = {{login.response.body.token}}
 
-### 2. Criar Novo Usuário (Pública)
+# ==========================================
+# 2. USUÁRIOS (Rotas de Gerenciamento)
+# ==========================================
+
+### Criar Novo Usuário (Público)
 POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "name": "Rowan Whitethorn",
-  "email": "rowan@exemplo.com",
-  "password": "senha_segura_123"
+  "name": "Novo Usuário Teste",
+  "email": "teste@exemplo.com",
+  "password": "senha_abc_123"
 }
-###
 
-### 3. Listar Tarefas (Pública ou Protegida conforme seu código)
+### Listar Todos os Usuários (ADMIN ou MANAGER)
+GET {{baseUrl}}/allusers
+Authorization: Bearer {{authToken}}
+
+### Atualizar Próprio Perfil (Logado)
+PUT {{baseUrl}}/users/id-do-usuario-aqui
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Hevellyn Meiriane (Editado)"
+}
+
+# ==========================================
+# 3. ÁREA ADMINISTRATIVA (Apenas ADMIN)
+# ==========================================
+
+### Promover Usuário (Apenas ADMIN)
+# Essa é a rota do seu novo AdminController
+PUT {{baseUrl}}/admin/users/e2708171-5812-48cd-9822-1d72deb17320/role
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "role": "ADMIN"
+}
+
+### Deletar Usuário (Soft Delete - Apenas ADMIN)
+DELETE {{baseUrl}}/users/100d064a-0c39-4bd6-8d71-18d84b326a51
+Authorization: Bearer {{authToken}}
+
+# ==========================================
+# 4. TAREFAS (TASKS)
+# ==========================================
+
+### Listar Minhas Tarefas
 GET {{baseUrl}}/tasks
 Authorization: Bearer {{authToken}}
-###
 
-### 4. Criar Nova Tarefa (Protegida)
+
+### Criar Nova Tarefa
 POST {{baseUrl}}/tasks
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "title": "Comprar leite",
-  "description": "Ir ao supermercado e comprar leite"
+  "title": "Estudar Eletromagnetismo para a UFC",
+  "description": "Revisar equações de Maxwell"
 }
-###
-
-### 5. Deletar Usuário (Protegida)
-DELETE {{baseUrl}}/users/100d064a-0c39-4bd6-8d71-18d84b326a51
-Authorization: Bearer {{authToken}}
-###

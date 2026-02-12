@@ -1,7 +1,8 @@
 import { FastifyInstance } from "fastify";
 import { UserController } from "../controllers/user-controller";
-import { prisma } from "../lib/prisma";
 import { AuthController } from "../controllers/auth-controller";
+import { AdminController } from "../controllers/admin-controller";
+import { authorize } from "../middlewares/rbac";
 
 const userController = new UserController();
 const authController = new AuthController();
@@ -10,39 +11,21 @@ export async function authRoutes(app: FastifyInstance) {
     app.post('/login', authController.login.bind(authController));
 }
 
+export async function adminRoutes(app: FastifyInstance) {
+    const adminController = new AdminController();
+    app.put('/admin/users/:id/role', { preHandler: authorize(["ADMIN"]) }, adminController.updateUserRole.bind(adminController));
+}
+
 export async function userRoutes(app: FastifyInstance) {
-    app.post('/users', async (request, reply) => {
-        return await userController.createUser(request, reply);
-    });
+    //Create User
+    app.post('/users', userController.createUser.bind(userController));
 
-    app.get('/allusers', async (request, reply) => {
-        try{
-            await request.jwtVerify();
-            const users = await prisma.user.findMany();
-            return users;
-        } catch (error) {
-            reply.status(401)
-            return { error: "Unauthorized" }
-        };
-    });
+    //Get all Users
+    app.get('/allusers', { preHandler: authorize(["ADMIN"]) }, userController.getAllUsers.bind(userController));
 
-    app.delete('/users/:id', async (request, reply) => {
-        try{
-            await request.jwtVerify();
-            return await userController.deleteUser(request, reply);
-        } catch (error) {
-            reply.status(401)
-            return { error: "Unauthorized" }
-        };
-    });
+    //Delete User
+    app.delete('/users/:id', { preHandler: authorize(["ADMIN"]) }, userController.deleteUser.bind(userController));
 
-    app.put('/users/:id', async (request, reply) => {
-        try{
-            await request.jwtVerify();
-            return await userController.updateUser(request, reply);
-        } catch (error) {
-            reply.status(401)
-            return { error: "Unauthorized" }
-        };
-    });
+    //Update User
+    app.put('/users/:id', { preHandler: authorize(["ADMIN", "USER"]) }, userController.updateUser.bind(userController));
 }

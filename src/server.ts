@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import fastify from 'fastify'
-import { authRoutes, userRoutes } from './routes/user-routes'
+import { adminRoutes, authRoutes, userRoutes } from './routes/user-routes'
 import { taskRoutes } from './routes/task-routes'
 import jwt from '@fastify/jwt';
 
@@ -13,6 +13,7 @@ app.register(jwt, {
 app.register(authRoutes)
 app.register(userRoutes)
 app.register(taskRoutes)
+app.register(adminRoutes)
 
 app.get('/', async () => {
   return { message: 'API Online com Prisma Postgres!' }

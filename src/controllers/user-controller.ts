@@ -13,12 +13,14 @@ export class UserController {
             return user
         } catch (error) {
             reply.status(409)
-            return { error: "Não foi possível concluir o cadastro com os dados informados. Verifique suas informações e tente o login novamente." }
+            return { error: "It's not possible to create the user with the provided data." }
         }
     }
 
     async getAllUsers(request: FastifyRequest, reply: FastifyReply) {
-        const users = await prisma.user.findMany()
+        const users = await prisma.user.findMany({
+            where: {isDeleted: false},
+        })
         return users  
     }
 
@@ -33,16 +35,22 @@ export class UserController {
     }
 
     async updateUser(request: FastifyRequest, reply: FastifyReply) {
-        const { id } = request.params as { id: string }
-        const { name, email, password } = request.body as { name?: string; email?: string; password?: string }
-        const data: any = {}
-        if (name) data.name = name
-        if (email) data.email = email
-        if (password) data.password = await bcrypt.hash(password, 10)
-        const user = await prisma.user.update({
-            where: { id },
-            data,
-        })
-        return user
+        try {
+            await request.jwtVerify();
+            const { id } = request.params as { id: string }
+            const { name, email, password } = request.body as { name?: string; email?: string; password?: string }
+            const data: any = {};
+            if (name) data.name = name;
+            if (email) data.email = email;
+            if (password) data.password = await bcrypt.hash(password, 10);
+            const user = await prisma.user.update({
+                where: { id },
+                data,
+            })
+            return user
+        } catch (error) {
+            reply.status(401)
+            return { error: "Unauthorized" }
+        }
     }
 }

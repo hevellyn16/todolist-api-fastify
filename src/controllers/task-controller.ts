@@ -12,11 +12,17 @@ export class TaskController {
     }
 
     async getTasksByUserId(request: FastifyRequest, reply: FastifyReply) {
-        const { userId } = request.query as { userId: string }
-        const tasks = await prisma.task.findMany({
-            where: { userId },
-        })
-        return tasks  
+        try {
+            await request.jwtVerify();
+            const userId = request.user.sub
+            const tasks = await prisma.task.findMany({
+                where: { userId: userId, isDeleted: false },
+            })
+            return tasks
+        } catch (error) {
+            reply.status(401)
+            return { error: "Unauthorized" }
+        }
     }
 
     async updateTask(request: FastifyRequest, reply: FastifyReply) {
