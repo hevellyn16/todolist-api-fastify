@@ -100,3 +100,8 @@ Authorization: Bearer {{authToken}}
 ### Deletar Tarefa
 DELETE {{baseUrl}}/tasks/68e8941d-c8a3-49b7-ac58-ded9e6dd58ae
 Authorization: Bearer {{authToken}}
+
+### Obter Detalhes de uma Tarefa
+GET {{baseUrl}}/tasks/5b25c108-4cab-49c9-b31c-5686e797f7e8
+Authorization: Bearer {{authToken}}
+# ==========================================

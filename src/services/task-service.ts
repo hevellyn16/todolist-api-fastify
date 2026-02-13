@@ -32,4 +32,12 @@ export class TaskService {
     async getByUserId(userId: string) {
         return await taskRepository.findManyByUserId(userId);
     }
+
+    async getById(id: string, userId: string) {
+        const task = await taskRepository.findById(id);
+        if (!task || task.userId !== userId) {
+            return null;
+        }
+        return task;
+    }
 }

@@ -46,4 +46,17 @@ export class TaskController {
             return reply.status(500).send({ message: "Internal server error" });
         }
     }
+
+    async getTaskById(request: FastifyRequest, reply: FastifyReply) {
+        try {
+            const { id } = request.params as { id: string };
+            const task = await taskService.getById(id, request.user.sub);
+            if (!task) {
+                return reply.status(404).send({ message: "Task not found" });
+            }
+            return reply.status(200).send(task);
+        } catch (error) {
+            return reply.status(500).send({ message: "Internal server error" });
+        }
+    }
 }

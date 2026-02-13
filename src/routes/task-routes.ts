@@ -80,6 +80,27 @@ export async function taskRoutes(app: FastifyInstance) {
         },
         preHandler: [async (request) => await request.jwtVerify()] }, taskController.updateTask.bind(taskController));
 
+    //Get Task by ID
+    app.get('/tasks/:id', {
+        schema: {
+            tags: ['Tasks'],
+            summary: "Get a task by ID",
+            description: "Retrieve a task by its ID for the authenticated user",
+            params: z.object({
+                id: z.string(),
+            }),
+            response: {
+                200: ResponseSchema,
+                401: z.object({
+                    error: z.string(),
+                }),
+                404: z.object({
+                    message: z.string(),
+                }),
+            },
+        },
+        preHandler: [async (request) => await request.jwtVerify()] }, taskController.getTaskById.bind(taskController));
+
     //Delete Task
     app.delete('/tasks/:id', {
         schema: {
