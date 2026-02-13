@@ -35,7 +35,7 @@
     "posttest": "npm run test:down",
     "test:coverage": "vitest run --coverage",
     "build": "tsc && npx prisma generate",
-    "start": "node dist/server.js",
+    "start": "node build/src/server.js",
     "postinstall": "npx prisma generate"
   },
   "prisma": {
