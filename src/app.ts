@@ -8,8 +8,17 @@ import { errorHandler } from './error-handle';
 import {fastifySwagger} from '@fastify/swagger';
 import {fastifySwaggerUi} from '@fastify/swagger-ui';
 import { jsonSchemaTransform, serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
+import cors from '@fastify/cors';
 
 export const app = fastify()
+
+app.register(cors, {
+    origin:true, // Permitir todas as origens
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Permitir métodos HTTP específicos
+    allowedHeaders: ['Content-Type', 'Authorization'], // Permitir cabeçalhos específicos
+    credentials: true, // Permitir envio de cookies e credenciais
+})
+
 const secret = process.env.JWT_SECRET;
 if (!secret) {
     console.error("JWT_SECRET is not defined in the environment variables.");

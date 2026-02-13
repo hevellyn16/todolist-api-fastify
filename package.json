@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@fastify/cors": "^11.2.0",
     "@fastify/jwt": "^10.0.0",
     "@fastify/postgres": "^6.0.2",
     "@fastify/swagger": "^9.7.0",
@@ -32,7 +33,10 @@
     "pretest": "npm run test:up && dotenv -e .env.test -- npx prisma migrate deploy",
     "test": "dotenv -e .env.test -- vitest run",
     "posttest": "npm run test:down",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "build": "tsc && npx prisma generate",
+    "start": "node dist/server.js",
+    "postinstall": "npx prisma generate"
   },
   "prisma": {
     "seed": "npx tsx src/prisma/seed.ts"
