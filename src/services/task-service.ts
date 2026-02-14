@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { TaskRepository } from "../repositories/task-repository";
 
 const taskRepository = new TaskRepository();
@@ -9,7 +10,7 @@ export class TaskService {
         return await taskRepository.create({ title, description, userId });
     }
 
-    async update(id: string, userId: string, data: any) {
+    async update(id: string, userId: string, data: Prisma.TaskUpdateInput) {
         const task = await taskRepository.findById(id);
 
         if (!task || task.userId !== userId) {

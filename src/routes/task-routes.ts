@@ -3,13 +3,14 @@ import { TaskController } from "../controllers/task-controller";
 import { loginUserSchema } from "../schemas/user-schema";
 import { z } from "zod";
 import { createTaskSchema, updateTaskSchema } from "../schemas/task-schema";
+import { stat } from "node:fs";
 
 const taskController = new TaskController();
 const ResponseSchema = z.object({
     id: z.string(),
     title: z.string(),
     description: z.string().optional().nullable(),
-    completed: z.boolean(),
+    status: z.enum(["NOT_STARTED", "PENDING", "IN_PROGRESS", "COMPLETED"]),
     userId: z.string(),
     createdAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),

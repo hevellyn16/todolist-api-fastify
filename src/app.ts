@@ -14,6 +14,8 @@ export const app = fastify()
 
 app.register(cors, {
     origin:true, // Permitir todas as origens
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // Permitir métodos HTTP comuns
+    allowedHeaders: ['Content-Type', 'Authorization'], // Permitir cabeçalhos comuns
 })
 
 const secret = process.env.JWT_SECRET;

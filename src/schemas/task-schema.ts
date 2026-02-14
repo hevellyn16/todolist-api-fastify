@@ -8,6 +8,6 @@ export const createTaskSchema = z.object({
 export const updateTaskSchema = z.object({
     title: z.string().min(1, "Title is required").optional(),
     description: z.string().optional(),
-    completed: z.boolean().optional(),
+    status: z.enum(["NOT_STARTED", "PENDING", "IN_PROGRESS", "COMPLETED"]).optional(),
     userId: z.string().min(1, "User ID is required").optional(),
 });

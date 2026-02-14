@@ -17,6 +17,13 @@ enum Role {
   ADMIN
 }
 
+enum Status {
+  NOT_STARTED
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -35,7 +42,7 @@ model Task {
   id        String   @id @default(uuid())
   title     String
   description String?
-  completed Boolean  @default(false)
+  status    Status   @default(NOT_STARTED)
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
