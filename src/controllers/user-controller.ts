@@ -6,11 +6,12 @@ const userService = new UserService();
 
 export class UserController {
     async createUser(request: FastifyRequest, reply: FastifyReply) {
-        const body = createUserSchema.parse(request.body);
         try {
+            const body = createUserSchema.parse(request.body);
             const user = await userService.create(body);
             const { password: _, ...userWithoutPassword } = user;
             return reply.status(201).send(userWithoutPassword);
+
         } catch (error: any) {
             if (error.code === 'P2002') return reply.status(400).send({ message: "Email in use" });
             throw error;

@@ -18,6 +18,5 @@ export const errorHandler: FastifyInstance["errorHandler"] = (error, request, re
         return reply.status(403).send({ message: "Forbidden" });
     }
 
-    console.error(error)
-    return reply.status(500).send({ message: "Internal server error" })
+    return reply.status(500).send({ message: "Internal server error" });
 }

@@ -21,6 +21,10 @@ export async function authRoutes(app: FastifyInstance) {
                 401: z.object({
                     error: z.string(),
                 }),
+                400: z.object({
+                    message: z.string(),
+                    errors: z.record(z.string(), z.array(z.string())),
+                }),
             },
         },
     }, authController.login.bind(authController));

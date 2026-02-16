@@ -11,8 +11,8 @@ POST {{baseUrl}}/login
 Content-Type: application/json
 
 {
-  "email": "teste@exemplo.com",
-  "password": "senha_segura_123"
+  "email": "",
+  "password": ""
 }
 
 ### Armazenar o Token do Login acima
