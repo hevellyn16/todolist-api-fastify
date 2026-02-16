@@ -6,9 +6,9 @@ const taskService = new TaskService();
 
 export class TaskController {
     async createTask(request: FastifyRequest, reply: FastifyReply) {
+        const data = createTaskSchema.parse(request.body);
         try{
-            const { title, description } = createTaskSchema.parse(request.body);
-            const task = await taskService.create(title, description, request.user.sub);
+            const task = await taskService.create(data, request.user.sub);
             return reply.status(201).send(task);
         } catch (error: any) {
             if (error.code === 'P2002') {

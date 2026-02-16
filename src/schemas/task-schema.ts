@@ -2,7 +2,8 @@ import {z} from "zod";
 
 export const createTaskSchema = z.object({
     title: z.string().min(1, "Title is required"),
-    description: z.string().optional(),
+    description: z.string().default(""),
+    status: z.enum(["NOT_STARTED", "PENDING", "IN_PROGRESS", "COMPLETED"]).default("NOT_STARTED"),
 });
 
 export const updateTaskSchema = z.object({

@@ -4,10 +4,16 @@ import { TaskRepository } from "../repositories/task-repository";
 const taskRepository = new TaskRepository();
 
 export class TaskService {
-    async create(title: string, description: string | undefined, userId: string) {
+    async create(data: any, userId: string) {
+        const { title, description, status } = data;
         if (!title.trim()) throw new Error("TitleRequired");
 
-        return await taskRepository.create({ title, description, userId });
+        return await taskRepository.create({
+            title,
+            description,
+            status: (status as any || "NOT_STARTED"),
+            userId,
+        });
     }
 
     async update(id: string, userId: string, data: Prisma.TaskUpdateInput) {

@@ -85,7 +85,8 @@ Authorization: Bearer {{authToken}}
 
 {
   "title": "Estudar Programação",
-  "description": "Revisar conceitos de JavaScript e TypeScript"
+  "description": "Revisar conceitos de JavaScript e TypeScript",
+  "status": "PENDING"
 }
 
 ### Atualizar Tarefa Existente
