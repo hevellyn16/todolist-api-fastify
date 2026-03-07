@@ -13,7 +13,7 @@ export class UserController {
             return reply.status(201).send(userWithoutPassword);
 
         } catch (error: any) {
-            if (error.code === 'P2002') return reply.status(400).send({ message: "Email in use" });
+            if (error.code === 'P2002') return reply.status(409).send({ message: "Email already in use" });
             throw error;
         }
     }
@@ -42,7 +42,7 @@ export class UserController {
                 return reply.status(404).send({ message: "User not found" });
             }
             if (error.code === 'P2002') {
-                return reply.status(400).send({ message: "Email in use" });
+                return reply.status(409).send({ message: "Email already in use" });
             }
             throw error;
         };

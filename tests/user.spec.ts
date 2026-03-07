@@ -27,6 +27,17 @@ describe("User Tests", () => {
         userToken = authResponse.body.token;
     });
 
+    it("should return 409 when registering with an already used email", async () => {
+        const response = await request(app.server).post("/users").send({
+            name: "Duplicate User",
+            email: "user.test@example.com",
+            password: "password123"
+        });
+
+        expect(response.status).toBe(409);
+        expect(response.body).toHaveProperty("message", "Email already in use");
+    });
+
     it("should create a new user and deny admin access", async () => {
 
         const response = await request(app.server)
